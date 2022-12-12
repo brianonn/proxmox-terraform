@@ -4,6 +4,7 @@ secrets.env
 *.tfplan
 *.tfstate
 *.tfstate.backup
+*.tfstate.lock.*
 *.lock
 *.tmp
 *.lock.hcl
