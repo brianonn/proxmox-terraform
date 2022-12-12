@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Proxmox VM creation with Terraform</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+font-size: 12px;
+line-height: 1.7;
+padding: 1em;
+margin: auto;
+max-width: 42em;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+line-height: 125%;
+margin-top: 2em;
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2.5em;
+}
+h2 {
+font-size: 2em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+font-family: monospace, monospace;
+_font-family: 'courier new', monospace;
+font-size: 0.98em;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 1em 0;
+}
+figure img {
+border: none;
+margin: 0 auto;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.author {
+font-size: 1.2em;
+text-align: center;
+}
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 12pt;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+a[href]:after {
+content: " (" attr(href) ")";
+}
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Proxmox VM creation with Terraform</h1>
+</header>
+<h3 id="introduction">Introduction</h3>
+<p>This is a terraform module for making VMs in Proxmox</p>
+<p>It uses the Proxmox API and the <a href="https://github.com/Telmate/terraform-provider-proxmox">Telmate
+Terraform provider for Proxmox</a></p>
+<ol type="1">
+<li>run <code>make secrets</code> first to create a file
+<code>secrets.env</code> from the sample file.</li>
+<li>edit the <code>secrets.env</code> file to add your own ID and TOKEN
+for authentication to the proxmox server.</li>
+<li>then source the env file in your shell:
+<code>source secrets.env</code></li>
+</ol>
+<p>See the instructions at the <a href="https://registry.terraform.io/providers/Telmate/proxmox/latest/docs">Telmate
+provider documentation</a> for setting up the Proxmox user and roles
+needed for creating Proxmox VMs via the API.</p>
+<h3 id="storing-secrets.env-in-hashicorp-vault-optional">Storing
+secrets.env in Hashicorp Vault (optional)</h3>
+<p>A good practice is to store your secrets in an encrypted vault. <a href="https://registry.terraform.io/providers/hashicorp/vault/latest/docs">Hashicorp
+Vault</a> is a great tool for storing all your secrets and it’s worth
+getting to know how Hashicorp Vault works. There is a <a href="https://developer.hashicorp.com/vault/tutorials/getting-started">tutorial</a>
+available online and plenty of <a href="https://youtube.com/">YouTube</a> videos too.</p>
+<p>If you decide that you want to store your <code>secrets.env</code>
+into Hashicorp Vault, you must already be authenticated to the vault and
+have a valid <code>VAULT_TOKEN</code> or <code>~/.vault-token</code></p>
+<pre class="shell"><code>vault kv put -mount=secret /path/to/secret file=$( base64 secrets.env )</code></pre>
+<p>This writes the entire <code>secrets.env</code> file as a base64
+blob.</p>
+<p>To extract the secrets from vault, use:</p>
+<pre class="shell"><code>vault kv get -format=json -mount=secret /path/to/secret |\
+       jq -r .data.data.file |\
+       base64 -d &gt; secrets.env</code></pre>
+<p>If you just wanted to do this inside of the terraform HCL, you can
+use the <a href="https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/kv_secret">Terraform
+provider for Hashicorp Vault</a> to get the id and token directly from
+the vault and skip the base64 blob and <code>secrets.env</code>
+altogether.</p>
+<h3 id="variables-you-can-set">Variables you can set</h3>
+<p>You will also need to edit the file <code>terraform.tfvars</code> to
+your liking. See the tfvars documentation at <a href="file://documentation/documentation.html">documentation/documentation.html</a></p>
+<p>Finally, you can run <code>make plan</code> and if you like what you
+see, then run <code>make apply</code> (these make targets simply run
+<code>terraform plan</code> and <code>terraform apply</code>
+respectively.)</p>
+<p>You can run <code>terraform apply -var vm_count=5</code> to create 5
+VMs</p>
+<p>You can run <code>terraform apply -var vm_count=0</code> to destroy
+all VMs</p>
+<h3 id="sample-output">Sample output</h3>
+<p>here’s the output from running
+<code>terraform apply -var vm_count=6</code></p>
+<pre class="shell"><code>$ terraform apply -var vm_count=6
+proxmox_vm_qemu.server[3]: Creating...
+proxmox_vm_qemu.server[2]: Creating...
+proxmox_vm_qemu.server[4]: Creating...
+proxmox_vm_qemu.server[0]: Creating...
+proxmox_vm_qemu.server[1]: Creating...
+proxmox_vm_qemu.server[5]: Creating...
+proxmox_vm_qemu.server[3]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [10s elapsed]
+proxmox_vm_qemu.server[3]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [20s elapsed]
+proxmox_vm_qemu.server[3]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [30s elapsed]
+proxmox_vm_qemu.server[3]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [40s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[3]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [50s elapsed]
+proxmox_vm_qemu.server[3]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[3]: Creation complete after 1m1s [id=pve/qemu/503]
+proxmox_vm_qemu.server[5]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m0s elapsed]
+proxmox_vm_qemu.server[2]: Still creating... [1m10s elapsed]
+proxmox_vm_qemu.server[4]: Still creating... [1m10s elapsed]
+proxmox_vm_qemu.server[0]: Still creating... [1m10s elapsed]
+proxmox_vm_qemu.server[2]: Creation complete after 1m11s [id=pve/qemu/502]
+proxmox_vm_qemu.server[5]: Still creating... [1m10s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m10s elapsed]
+proxmox_vm_qemu.server[0]: Creation complete after 1m16s [id=pve/qemu/500]
+proxmox_vm_qemu.server[4]: Creation complete after 1m16s [id=pve/qemu/504]
+proxmox_vm_qemu.server[5]: Still creating... [1m20s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m20s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m30s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [1m30s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [1m40s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m40s elapsed]
+proxmox_vm_qemu.server[5]: Still creating... [1m50s elapsed]
+proxmox_vm_qemu.server[1]: Still creating... [1m50s elapsed]
+proxmox_vm_qemu.server[1]: Creation complete after 1m57s [id=pve/qemu/501]
+proxmox_vm_qemu.server[5]: Still creating... [2m0s elapsed]
+proxmox_vm_qemu.server[5]: Creation complete after 2m7s [id=pve/qemu/505]
+
+Apply complete! Resources: 6 added, 0 changed, 6 destroyed.
+
+Outputs:
+
+instance_ip_address = [
+  &quot;192.168.0.94&quot;,
+  &quot;192.168.0.84&quot;,
+  &quot;192.168.0.77&quot;,
+  &quot;192.168.0.79&quot;,
+  &quot;192.168.0.88&quot;,
+  &quot;192.168.0.90&quot;,
+]
+instance_mac_address = [
+  &quot;9A:5C:C4:65:7D:E7&quot;,
+  &quot;56:A9:83:60:35:E3&quot;,
+  &quot;BA:B4:43:96:16:C9&quot;,
+  &quot;5E:AE:45:4A:D5:CA&quot;,
+  &quot;BE:C9:48:E9:22:2B&quot;,
+  &quot;12:99:C1:3E:BA:C9&quot;,
+]
+instance_name = [
+  &quot;k8s-1&quot;,
+  &quot;k8s-2&quot;,
+  &quot;k8s-3&quot;,
+  &quot;k8s-4&quot;,
+  &quot;k8s-5&quot;,
+  &quot;k8s-6&quot;,
+]</code></pre>
+</body>
+</html>

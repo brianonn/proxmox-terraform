@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Terraform Documentation for Proxmox VM creation</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+font-size: 12px;
+line-height: 1.7;
+padding: 1em;
+margin: auto;
+max-width: 42em;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+line-height: 125%;
+margin-top: 2em;
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2.5em;
+}
+h2 {
+font-size: 2em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+font-family: monospace, monospace;
+_font-family: 'courier new', monospace;
+font-size: 0.98em;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 1em 0;
+}
+figure img {
+border: none;
+margin: 0 auto;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.author {
+font-size: 1.2em;
+text-align: center;
+}
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 12pt;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+a[href]:after {
+content: " (" attr(href) ")";
+}
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Terraform Documentation for Proxmox VM creation</h1>
+</header>
+<h2 id="requirements">Requirements</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a name="requirement_proxmox"></a> <a href="#requirement_proxmox">proxmox</a></td>
+<td>2.7.4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="providers">Providers</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a name="provider_proxmox"></a> <a href="#provider_proxmox">proxmox</a></td>
+<td>2.7.4</td>
+</tr>
+<tr class="even">
+<td><a name="provider_template"></a> <a href="#provider_template">template</a></td>
+<td>2.2.0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="modules">Modules</h2>
+<p>No modules.</p>
+<h2 id="resources">Resources</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://registry.terraform.io/providers/telmate/proxmox/2.7.4/docs/resources/vm_qemu">proxmox_vm_qemu.server</a></td>
+<td>resource</td>
+</tr>
+<tr class="even">
+<td><a href="https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file">template_file.ssh_key</a></td>
+<td>data source</td>
+</tr>
+</tbody>
+</table>
+<h2 id="inputs">Inputs</h2>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 29%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th style="text-align: center;">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a name="input_agent"></a> <a href="#input_agent">agent</a></td>
+<td>Whether or not to enable the QEMU agent in Proxmox. This also
+requires the agent to be running in the VM</td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="even">
+<td><a name="input_disk"></a> <a href="#input_disk">disk</a></td>
+<td>The disk storage parameters to attach to the VM</td>
+<td><code>map</code></td>
+<td></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="odd">
+<td><a name="input_ipconfig0"></a> <a href="#input_ipconfig0">ipconfig0</a></td>
+<td>Sets the IP configuration for the first ethernet NIC of each VM</td>
+<td><code>string</code></td>
+<td><code>&quot;ip=dhcp,ip6=dhcp&quot;</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="even">
+<td><a name="input_ssh_public_key"></a> <a href="#input_ssh_public_key">ssh_public_key</a></td>
+<td>The SSH public key that will be set on the VM when it’s created</td>
+<td><code>string</code></td>
+<td><code>&quot;id_rsa.pub&quot;</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="odd">
+<td><a name="input_start_on_boot"></a> <a href="#input_start_on_boot">start_on_boot</a></td>
+<td>Start this VM on server boot</td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="even">
+<td><a name="input_target_node"></a> <a href="#input_target_node">target_node</a></td>
+<td>The target node where all VMs will be created</td>
+<td><code>string</code></td>
+<td>n/a</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="odd">
+<td><a name="input_template_name"></a> <a href="#input_template_name">template_name</a></td>
+<td>The name of the template that will be cloned to make VMs</td>
+<td><code>string</code></td>
+<td>n/a</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="even">
+<td><a name="input_vm_cores"></a> <a href="#input_vm_cores">vm_cores</a></td>
+<td>How many cores for the VM</td>
+<td><code>number</code></td>
+<td><code>2</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="odd">
+<td><a name="input_vm_count"></a> <a href="#input_vm_count">vm_count</a></td>
+<td>Set this number to the number of VMs you want to create. Set it to
+‘0’ to destroy all resources</td>
+<td><code>number</code></td>
+<td><code>1</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="even">
+<td><a name="input_vm_full_clone"></a> <a href="#input_vm_full_clone">vm_full_clone</a></td>
+<td>Do a full clone when true, linked clone when false</td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="odd">
+<td><a name="input_vm_id_start"></a> <a href="#input_vm_id_start">vm_id_start</a></td>
+<td>The number to start VM id at. Multiple VM’s will increment from
+here</td>
+<td><code>number</code></td>
+<td>n/a</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="even">
+<td><a name="input_vm_memory"></a> <a href="#input_vm_memory">vm_memory</a></td>
+<td>The amount of memory to allocate to the VM</td>
+<td><code>number</code></td>
+<td><code>512</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="odd">
+<td><a name="input_vm_name"></a> <a href="#input_vm_name">vm_name</a></td>
+<td>The name of the VM created. If there is more than 1 then this will
+be a basename</td>
+<td><code>string</code></td>
+<td><code>&quot;vm&quot;</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr class="even">
+<td><a name="input_vm_sockets"></a> <a href="#input_vm_sockets">vm_sockets</a></td>
+<td>How many sockets for the VM</td>
+<td><code>number</code></td>
+<td><code>1</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+</tbody>
+</table>
+<h2 id="outputs">Outputs</h2>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a name="output_instance_ip_address"></a> <a href="#output_instance_ip_address">instance_ip_address</a></td>
+<td>The IPV4 address of the VM created</td>
+</tr>
+<tr class="even">
+<td><a name="output_instance_mac_address"></a> <a href="#output_instance_mac_address">instance_mac_address</a></td>
+<td>The MAC address of the VM created</td>
+</tr>
+<tr class="odd">
+<td><a name="output_instance_name"></a> <a href="#output_instance_name">instance_name</a></td>
+<td>The name of the VM created</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
