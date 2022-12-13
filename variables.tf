@@ -1,6 +1,5 @@
 variable "ssh_public_key" {
     type        = string
-    default     = "id_rsa.pub"
     description = "The SSH public key that will be set on the VM when it's created"
 }
 

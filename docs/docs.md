@@ -29,7 +29,7 @@ No modules.
 | <a name="input_agent"></a> [agent](#input\_agent) | Whether or not to enable the QEMU agent in Proxmox. This also requires the agent to be running in the VM | `bool` | `true` | no |
 | <a name="input_disk"></a> [disk](#input\_disk) | The disk storage parameters to attach to the VM | `map` | <pre>{<br>  "size": "10G",<br>  "storage": "local",<br>  "type": "scsi"<br>}</pre> | no |
 | <a name="input_ipconfig0"></a> [ipconfig0](#input\_ipconfig0) | Sets the IP configuration for the first ethernet NIC of each VM | `string` | `"ip=dhcp,ip6=dhcp"` | no |
-| <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | The SSH public key that will be set on the VM when it's created | `string` | `"id_rsa.pub"` | no |
+| <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | The SSH public key that will be set on the VM when it's created | `string` | n/a | yes |
 | <a name="input_start_on_boot"></a> [start\_on\_boot](#input\_start\_on\_boot) | Start this VM on server boot | `bool` | `true` | no |
 | <a name="input_target_node"></a> [target\_node](#input\_target\_node) | The target node where all VMs will be created | `string` | n/a | yes |
 | <a name="input_template_name"></a> [template\_name](#input\_template\_name) | The name of the template that will be cloned to make VMs | `string` | n/a | yes |

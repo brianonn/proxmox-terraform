@@ -19,7 +19,7 @@ plan: $(SECRETS)
 apply: $(SECRETS)
 	terraform apply $(SAVEDPLAN)
 
-docs: README.html 
+docs: README.html variables.tf main.tf
 	$(MAKE) -C docs
 
 .PHONY: secret secrets
@@ -34,6 +34,7 @@ $(SECRETS):
 .PHONY: clean realclean distclean
 clean:
 	$(RM) terraform.tfstate*
+	$(RM) examples/*/terraform.tfstate*
 	$(RM) terraform.tfplan
 
 realclean: clean
