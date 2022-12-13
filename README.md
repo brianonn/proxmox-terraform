@@ -33,7 +33,7 @@ vault kv get -format=json -mount=secret /path/to/secret |\
 If you just wanted to do this inside of the terraform HCL, you can use the [Terraform provider for Hashicorp Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/kv_secret) to get the id and token directly from the vault and skip the base64 blob and `secrets.env` altogether. 
 
 ### Variables you can set 
-You will also need to edit the file `terraform.tfvars` to your liking.  See the tfvars documentation at [documentation/documentation.html](file://documentation/documentation.html)
+You will also need to edit the file `terraform.tfvars` to your liking.  See the tfvars documentation at [docs/docs.html](file://docs/docs.html)
 
 Finally, you can run `make plan` and if you like what you see, then run `make apply` (these make targets simply run `terraform plan` and `terraform apply` respectively.)
 

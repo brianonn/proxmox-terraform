@@ -20,7 +20,7 @@ apply: $(SECRETS)
 	terraform apply $(SAVEDPLAN)
 
 docs: README.html 
-	$(MAKE) -C documentation
+	$(MAKE) -C docs
 
 .PHONY: secret secrets
 secret secrets: $(SECRETS)
@@ -42,12 +42,12 @@ realclean: clean
 distclean: realclean
 	$(RM) $(SECRETS)
 	$(RM) README.html
-	$(MAKE) -C documentation distclean
+	$(MAKE) -C docs distclean
 
 README.html: README.md
 	pandoc -f markdown -t html \
 		--embed-resources --standalone \
-		--css=documentation/pandoc.css \
+		--css=docs/pandoc.css \
 		--metadata title="Proxmox VM creation with Terraform" \
 		--output=README.html \
 		README.md
