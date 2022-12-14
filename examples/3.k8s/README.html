@@ -79,8 +79,7 @@ in two places. The first is for creating 2 servers with 4G memory and 4
 cores, and the second time is for creating 3 workers, each with 2G of
 memory and 2 cores. This example is useful for deploying control plane
 and worker VM that can be provisioned for kubernetes.</p>
-<pre class="hcl"><code>
-terraform {
+<pre class="hcl"><code>terraform {
   required_providers {
     proxmox   = {
       source  = &quot;telmate/proxmox&quot;
@@ -104,7 +103,7 @@ provider &quot;proxmox&quot; {
 #
 # deploy the server instances
 #
-module &quot;k8s-servers&quot; {
+module &quot;k8s_servers&quot; {
   source = &quot;github.com/brianonn/proxmox-terraform&quot;
 
   # the node in our proxmox cluster to target for VM creation
@@ -136,13 +135,15 @@ module &quot;k8s-servers&quot; {
     storage = &quot;local&quot;
     type    = &quot;scsi&quot;
   }
+
+  vm_full_clone = false
 }
 
 
 #
 # deploy the worker instances
 #
-module &quot;k8s-workers&quot; {
+module &quot;k8s_workers&quot; {
   source = &quot;github.com/brianonn/proxmox-terraform&quot;
 
   # the node in our proxmox cluster to target for VM creation
@@ -174,8 +175,19 @@ module &quot;k8s-workers&quot; {
     storage = &quot;local&quot;
     type    = &quot;scsi&quot;
   }
+
+  vm_full_clone = false
 }
-</code></pre>
+
+# outputs from the servers module
+output &quot;servers_instance_data&quot; {
+  value = module.k8s_servers
+}
+
+# outputs from the workers module
+output &quot;workers_instance_data&quot; {
+  value = module.k8s_workers
+}</code></pre>
 <h3 id="running-the-main.tf">Running the main.tf</h3>
 <p>You must first download the providers and modules needed..</p>
 <pre class="shell"><code>$ terraform init </code></pre>
@@ -184,43 +196,76 @@ Edit the input variables in the module block until you are satisfied.
 For documentation on the input variables, see the <a href="github.com/brianonn/proxmox-terraform/docs/docs.html">proxmox-terraform
 module documentation.</a></p>
 <p>Finally, run <code>terraform apply</code> to apply the plan.</p>
-<pre class="shell"><code>[694] $ terraform apply
+<pre class="shell"><code>$ terraform apply --auto-approve
+module.k8s_workers.data.template_file.ssh_key: Reading...
+module.k8s_servers.data.template_file.ssh_key: Reading...
+module.k8s_servers.data.template_file.ssh_key: Read complete after 0s [id=904f53240b6c05c2322c2a52aea248008a2399d18c62d121d08619e0620b6427]
+module.k8s_workers.data.template_file.ssh_key: Read complete after 0s [id=904f53240b6c05c2322c2a52aea248008a2399d18c62d121d08619e0620b6427]
 
-module.k8s-servers.data.template_file.ssh_key: Reading...
-module.k8s-workers.data.template_file.ssh_key: Reading...
-module.k8s-servers.data.template_file.ssh_key: Read complete after 0s [id=904f53240b6c05c2322c2a52aea248008a2399d18c62d121d08619e0620b6427]
-module.k8s-workers.data.template_file.ssh_key: Read complete after 0s [id=904f53240b6c05c2322c2a52aea248008a2399d18c62d121d08619e0620b6427]
-module.k8s-workers.proxmox_vm_qemu.server[1]: Refreshing state... [id=pve/qemu/301]
-module.k8s-workers.proxmox_vm_qemu.server[0]: Refreshing state... [id=pve/qemu/300]
-module.k8s-workers.proxmox_vm_qemu.server[2]: Refreshing state... [id=pve/qemu/302]
-
-Terraform used the selected providers to generate the following execution plan. Resource
-actions are indicated with the following symbols:
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
   + create
 
-modul e.k8s-servers.proxmox_vm_qemu.server[0]: Creating...
-module.k8s-servers.proxmox_vm_qemu.server[1]: Creating...
-module.k8s-workers.proxmox_vm_qemu.server[2]: Creating...
-module.k8s-workers.proxmox_vm_qemu.server[1]: Creating...
-module.k8s-workers.proxmox_vm_qemu.server[0]: Creating...
-module.k8s-servers.proxmox_vm_qemu.server[0]: Still creating... [10s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [10s elapsed]
+  Terraform will perform the following actions:
 
-[...]
+[ ... ] 
 
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [9m10s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [9m20s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [9m30s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [9m40s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [9m50s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [10m0s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [10m10s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [10m20s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Still creating... [10m30s elapsed]
-module.k8s-servers.proxmox_vm_qemu.server[1]: Creation complete after 10m39s [id=pve/qemu/201]
+module.k8s_servers.proxmox_vm_qemu.server[0]: Creating...
+module.k8s_servers.proxmox_vm_qemu.server[1]: Creating...
+module.k8s_workers.proxmox_vm_qemu.server[2]: Creating...
+module.k8s_workers.proxmox_vm_qemu.server[0]: Creating...
+module.k8s_workers.proxmox_vm_qemu.server[1]: Creating...
+module.k8s_servers.proxmox_vm_qemu.server[0]: Still creating... [10s elapsed]
+module.k8s_workers.proxmox_vm_qemu.server[0]: Still creating... [10s elapsed]
+module.k8s_workers.proxmox_vm_qemu.server[2]: Still creating... [10s elapsed]
+module.k8s_workers.proxmox_vm_qemu.server[1]: Still creating... [10s elapsed]
+module.k8s_servers.proxmox_vm_qemu.server[0]: Still creating... [20s elapsed]
 
+[ ... ] 
+
+module.k8s_workers.proxmox_vm_qemu.server[2]: Still creating... [1m10s elapsed]
+module.k8s_workers.proxmox_vm_qemu.server[0]: Still creating... [1m10s elapsed]
+module.k8s_workers.proxmox_vm_qemu.server[1]: Creation complete after 1m11s [id=pve/qemu/301]
+module.k8s_workers.proxmox_vm_qemu.server[2]: Creation complete after 1m13s [id=pve/qemu/302]
+module.k8s_servers.proxmox_vm_qemu.server[0]: Creation complete after 1m13s [id=pve/qemu/200]
+module.k8s_workers.proxmox_vm_qemu.server[0]: Creation complete after 1m13s [id=pve/qemu/300]
+module.k8s_servers.proxmox_vm_qemu.server[1]: Creation complete after 1m13s [id=pve/qemu/201]
 
 Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+servers_instance_data = {
+  &quot;instance_ip_address&quot; = [
+    &quot;192.168.0.148&quot;,
+    &quot;192.168.0.93&quot;,
+  ]
+  &quot;instance_mac_address&quot; = [
+    &quot;DA:FA:4D:E3:02:E5&quot;,
+    &quot;46:64:34:AD:C8:0F&quot;,
+  ]
+  &quot;instance_name&quot; = [
+    &quot;k8s-server-1&quot;,
+    &quot;k8s-server-2&quot;,
+  ]
+}
+workers_instance_data = {
+  &quot;instance_ip_address&quot; = [
+    &quot;192.168.0.80&quot;,
+    &quot;192.168.0.86&quot;,
+    &quot;192.168.0.83&quot;,
+  ]
+  &quot;instance_mac_address&quot; = [
+    &quot;CA:50:7B:41:9B:9D&quot;,
+    &quot;E6:8E:CA:64:C8:A7&quot;,
+    &quot;76:D7:1C:D9:6B:7E&quot;,
+  ]
+  &quot;instance_name&quot; = [
+    &quot;k8s-worker-1&quot;,
+    &quot;k8s-worker-2&quot;,
+    &quot;k8s-worker-3&quot;,
+  ]
+}
 </code></pre>
 </body>
 </html>

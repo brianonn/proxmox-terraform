@@ -22,7 +22,7 @@ provider "proxmox" {
 #
 # deploy the server instances
 #
-module "k8s-servers" {
+module "k8s_servers" {
   source = "github.com/brianonn/proxmox-terraform"
 
   # the node in our proxmox cluster to target for VM creation
@@ -55,14 +55,14 @@ module "k8s-servers" {
     type    = "scsi"
   }
 
-  vm_full_clone = false 
+  vm_full_clone = true
 }
 
 
 #
 # deploy the worker instances
 #
-module "k8s-workers" {
+module "k8s_workers" {
   source = "github.com/brianonn/proxmox-terraform"
 
   # the node in our proxmox cluster to target for VM creation
@@ -95,6 +95,15 @@ module "k8s-workers" {
     type    = "scsi"
   }
 
-  vm_full_clone = false 
+  vm_full_clone = true
 }
 
+# outputs from the servers module
+output "servers_instance_data" {
+  value = module.k8s_servers
+}
+
+# outputs from the workers module
+output "workers_instance_data" {
+  value = module.k8s_workers
+}

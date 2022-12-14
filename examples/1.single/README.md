@@ -33,7 +33,7 @@ provider "proxmox" {
 
 }
 
-module "proxmox" {
+module "proxmox_terraform" {
   source = "github.com/brianonn/proxmox-terraform"
 
   # the node in our proxmox cluster to target for VM creation
@@ -54,6 +54,11 @@ module "proxmox" {
     storage = "local"
     type    = "scsi"
   }
+}
+
+# import all the outputs from the proxmox_terraform module
+output "proxmox_terraform" {
+  value = module.proxmox_terraform
 }
 
 ```
@@ -183,5 +188,18 @@ module.proxmox.proxmox_vm_qemu.server[0]: Creation complete after 2m13s [id=pve/
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
+Outputs:
+
+proxmox_terraform = {
+  "instance_ip_address" = [
+    "192.168.0.80",
+  ]
+  "instance_mac_address" = [
+    "3A:EF:49:7B:17:8F",
+  ]
+  "instance_name" = [
+    "vm1",
+  ]
+}
 ```
 

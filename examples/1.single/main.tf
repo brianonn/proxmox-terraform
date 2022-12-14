@@ -19,14 +19,16 @@ provider "proxmox" {
 
 }
 
-module "proxmox" {
+module "proxmox_terraform" {
   source = "github.com/brianonn/proxmox-terraform"
 
   # the node in our proxmox cluster to target for VM creation
   target_node = "pve"
 
   # which ID to start at
-  vm_id_start = 300
+  vm_id_start = 400
+
+  vm_full_clone = false
 
   # which template to clone VMs from
   template_name = "ubuntu-template"
@@ -40,4 +42,9 @@ module "proxmox" {
     storage = "local"
     type    = "scsi"
   }
+}
+
+# import all the outputs from the proxmox_terraform module
+output "proxmox_terraform" {
+  value = module.proxmox_terraform
 }
