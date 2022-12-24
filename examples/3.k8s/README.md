@@ -2,15 +2,15 @@
 
 ### Server config
 
-This example deploys 2 separate groups of 2 larger server VMs and 3 smaller worker VMs on proxmox using the 
+This example deploys separate groups of 1 larger server VM and 3 smaller worker VMs on proxmox using the 
 [proxmox terraform module](github.com/brianonn/proxmox-terraform) code from github,
 
 
 The `main.tf` file is shown below.  We first initialize the proxmox provider from 
 Telmate then invoke the proxmod-terraform module in two places.  The first is for 
-creating 2 servers with 4G memory and 4 cores, and the second time is for creating
+creating servers with 4G memory and 4 cores, and the second time is for creating
 3 workers, each with 2G of memory and 2 cores. This example is useful for deploying
-control plane and worker VM that can be provisioned for kubernetes.
+the k8s control plane and worker VMs that can be provisioned for kubernetes.
 
 
 ```hcl

@@ -11,7 +11,7 @@ terraform {
 provider "proxmox" {
   pm_api_url = "https://pve.lan:8006/api2/json"
 
-  # use env vars from .secret.env
+  # use env vars from secrets.env
   #pm_api_token_id = "blog_example@pam!new_token_id"
   #pm_api_token_secret = "<put your secret token here>"
 
@@ -34,8 +34,8 @@ module "k8s_servers" {
   # which template to clone VMs from
   template_name = "ubuntu-template"
 
-  # set the count to 2 VMs
-  vm_count = 2
+  # 1 server VM
+  vm_count = 1
 
   # what to name these server instances
   # each VM will get "k8s-server-N"
