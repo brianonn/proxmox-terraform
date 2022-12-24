@@ -35,6 +35,7 @@ resource "proxmox_vm_qemu" "server" {
   clone       = var.template_name
   full_clone  = var.vm_full_clone
   onboot      = var.start_on_boot
+  tags        = var.vm_tags
 
   # agent is the qemu guest agent. 
   # This setting only enables it in Proxmox.  The guest still needs it installed.

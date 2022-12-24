@@ -42,6 +42,11 @@ variable "vm_name" {
     description = "The name of the VM created. If there is more than 1 then this will be a basename"
 }
 
+variable "vm_tags" {
+    type        = string
+    description = "The tags to add to the VM instance"
+}
+
 variable "vm_full_clone" {
     type        = bool
     default     = true
