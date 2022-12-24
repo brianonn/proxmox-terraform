@@ -56,6 +56,7 @@ module "k8s_servers" {
   }
 
   vm_full_clone = true
+  vm_tags       = "server, large"
 }
 
 
@@ -77,7 +78,7 @@ module "k8s_workers" {
   # set the count to 3 VMs
   vm_count = 3
 
-  # what to name these server instances
+  # what to name these worker instances
   # each VM will get "k8s-worker-N"
   vm_name = "k8s-worker-"
 
@@ -96,6 +97,7 @@ module "k8s_workers" {
   }
 
   vm_full_clone = true
+  vm_tags       = "worker, small"
 }
 
 # outputs from the servers module
